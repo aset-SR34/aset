@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventori Aset Sekolah</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        input {
+            padding: 10px;
+            margin-right: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 26%;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 12px;
+        }
+
+        .btn-add {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #27ae60;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f2f6fc;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            input {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+        }
+        .form-input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            height: 42px;
+            min-width: 180px;
+            background-color: #fff;
+        }
+
+        select:focus, input:focus {
+            border-color: #2ecc71;
+            outline: none;
+            box-shadow: 0 0 4px rgba(46,204,113,0.4);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <a href="" <h1>📦 Inventori Aset Sekolah SRMA 34 Lebak</h1></a>
+
+    <div class="card">
+        <form action="/tambah" method="post">
+            <!--<input type="text" name="kode" placeholder="Kode Barang" required>-->
+            <input type="text" name="nama_barang" placeholder="Nama Barang" required>
+            <input type="number" name="jumlah_barang" placeholder="Jumlah Barang" required>
+            <input type="text" name="tipe" placeholder="Tipe">
+            <input type="text" name="merk" placeholder="Merk">
+            <input type="number" name="tahun_perolehan" placeholder="Tahun">
+            <input type="number" name="nilai" placeholder="Nilai">
+            <!--<select name="ruang_id" class="form-input" required>
+                <option value="">-- Pilih Ruangan --</option>
+                {% for r in ruang %}
+                    <option value="{{ r.id }}">{{ r.nama_ruang }}</option>
+                {% endfor %}
+            </select>-->
+            <button type="submit" class="btn-add">Tambah Aset</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <table>
+            <tr>
+                <th>Kode</th>
+                <th>Nama</th>
+                <th>Jumlah</th>
+                <th>Tipe</th>
+                <th>Merk</th>
+                <th>Tahun</th>
+                <th>Nilai</th>
+                <th>Aksi</th>
+            </tr>
+            {% for a in barang %}
+            <tr>
+                <td>{{ a.id }}</td>
+                <td>{{ a.nama_barang }}</td>
+                <td>{{ a.jumlah_barang }}</td>
+                <td>{{ a.tipe }}</td>
+                <td>{{ a.merk }}</td>
+                <td>{{ a.tahun_perolehan }}</td>
+                <td>{{ a.nilai }}</td>
+                <td>
+                    <a href="/hapus/{{a.id}}">
+                        <button class="btn-delete">Hapus</button>
+                    </a>
+                    <a href="/periksa/{{a.id}}">
+                        <button>Periksa</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="footer">
+        Sistem Inventori Aset Sekolah © 2026
+    </div>
+
+</div>
+
+</body>
+</html>
