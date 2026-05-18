@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Grafik Kondisi Barang</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>Grafik Kondisi Barang</h2>
+
+<canvas id="grafik"></canvas>
+
+<script>
+const data = {
+    labels: ['Baik', 'Rusak Ringan', 'Rusak Berat', 'Hilang'],
+    datasets: [{
+        data: [{{data.bb}}, {{data.rr}}, {{data.rb}}, {{data.hl}}],
+        backgroundColor: ['#2ecc71','#f39c12','#e67e22','#e74c3c']
+    }]
+};
+
+new Chart(document.getElementById('grafik'), {
+    type: 'pie',
+    data: data
+});
+</script>
+
+</body>
+</html>

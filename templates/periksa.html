@@ -1,0 +1,234 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+
+/* Chrome, Edge */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.card-barang{
+    background:#fff;
+    border-radius:12px;
+    padding:18px;
+    overflow:hidden;
+    margin-bottom:16px; /* jarak antar barang */
+    box-shadow:0 4px 10px rgba(0,0,0,0.06);
+}
+
+.barang-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.barang-nama{
+    font-size:18px;
+    font-weight:600;
+}
+
+.jumlah{
+    font-size:14px;
+    color:#777;
+}
+
+.input-group{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:16px;
+    margin-top:12px;
+    width:100%;
+}
+
+.input-box{
+    background:#f8f9fa;
+    padding:10px;
+    width:100%;
+    border-radius:10px;
+    border:1px solid #eee;
+}
+
+.input-box label{
+    display:block;
+    font-size:12px;
+    color:#666;
+    margin-bottom:4px;
+}
+
+.input-box input{
+    width:100%;
+    max-width:100%;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    text-align:center;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.input-box input:focus{
+    outline:none;
+    border-color:#27ae60;
+    box-shadow:0 0 0 2px rgba(39,174,96,0.2);
+}
+
+.btn-simpan{
+    background:#27ae60;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.btn-simpan:hover{
+    background:#219150;
+}
+
+.badge-kondisi{
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    color:white;
+}
+
+.baik{background:#2ecc71;}
+.rusak{background:#e74c3c;}
+
+</style>
+
+<div class="card">
+<h2>🔍 Pemeriksaan Barang</h2>
+
+<form method="GET">
+    <label>Pilih Ruangan:</label>
+    <select name="ruang_id" onchange="this.form.submit()">
+    <option value="">-- pilih ruangan --</option>
+    {% for r in ruang %}
+        <option value="{{ r.id }}"
+        {% if ruang_id == r.id|string %}selected{% endif %}>
+            {{ r.nama_ruang }}
+        </option>
+    {% endfor %}
+</select>
+</form>
+    <!-- ✅ PINDAHKAN KE SINI -->
+    {% if ruang_id %}
+    <div style="margin-top:10px;">
+        <a href="/pemeriksaan/cetak/{{ ruang_id }}" target="_blank">
+            <button type="button"
+                    class="btn-simpan"
+                    style="background:#3498db;">
+                🖨 Cetak Laporan Rusak / Hilang
+            </button>
+        </a>
+    </div>
+    {% endif %}
+</div>
+<br>
+
+{% if barang %}
+<div class="card">
+<table>
+<form method="POST" action="/periksa">
+
+<input type="hidden" name="ruang_id" value="{{ ruang_id }}">
+
+{% for b in barang %}
+<div class="card-barang">
+
+    <div class="barang-header">
+        <div>
+            <div class="barang-nama">{{ b.nama_barang }}</div>
+            <div class="jumlah">Jumlah Sistem: {{ b.jumlah }}</div>
+        </div>
+
+        {% if b.rr + b.rb + b.hl > 0 %}
+            <span class="badge-kondisi rusak">Perlu Perhatian</span>
+        {% else %}
+            <span class="badge-kondisi baik">Baik</span>
+        {% endif %}
+    </div>
+
+    <div class="input-group">
+
+        <div class="input-box">
+            <label>RR</label>
+            <input type="number" name="rr_{{ b.barang_id }}" value="{{ b.rr }}">
+        </div>
+
+        <div class="input-box">
+            <label>RB</label>
+            <input type="number" name="rb_{{ b.barang_id }}" value="{{ b.rb }}">
+        </div>
+
+        <div class="input-box">
+            <label>HL</label>
+            <input type="number" name="hl_{{ b.barang_id }}" value="{{ b.hl }}">
+        </div>
+
+        <div class="input-box">
+            <label>Fisik</label>
+            <input type="number" name="jumlah_{{ b.barang_id }}" value="{{ b.jumlah }}"readonly>
+        </div>
+
+    </div>
+
+    <input type="hidden" name="barang_id[]" value="{{ b.barang_id }}">
+
+</div>
+{% endfor %}
+
+<button class="btn-simpan">💾 Simpan Semua</button>
+
+</form>
+</table>
+</div>
+{% endif %}
+
+<script>
+function hitung(el){
+    let row = el.closest("tr");
+    let inputs = row.querySelectorAll("input[type=number]");
+    let total = 0;
+
+    inputs.forEach(i => total += parseInt(i.value) || 0);
+
+    row.querySelector(".jumlah").innerText = total;
+}
+
+document.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", function() {
+
+        let parent = this.closest(".card-barang")
+
+        let rr = parseInt(parent.querySelector('[name^="rr_"]').value) || 0
+        let rb = parseInt(parent.querySelector('[name^="rb_"]').value) || 0
+        let hl = parseInt(parent.querySelector('[name^="hl_"]').value) || 0
+        let fisik = parseInt(parent.querySelector('[name^="jumlah_"]').value) || 0
+
+        if (rr + rb + hl > fisik) {
+            alert("Jumlah kondisi tidak boleh melebihi jumlah fisik!")
+            this.value = 0
+        }
+
+    })
+})
+
+</script>
+
+{% endblock %}

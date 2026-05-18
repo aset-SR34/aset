@@ -1,0 +1,199 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+h2{
+    margin-bottom:15px;
+}
+
+.table-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    border:1px  solid #eee;
+    min-width:900px;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+th{
+    background:#2c3e50;
+    color:white;
+    border:1px solid #6f6f6f;
+}
+
+.badge{
+    padding:4px 8px;
+    border-radius:6px;
+    color:white;
+    font-size:12px;
+}
+
+.bb{background:#2ecc71;}
+.rr{background:#f39c12;}
+.rb{background:#e67e22;}
+.hl{background:#e74c3c;}
+
+.selisih-negatif{color:#e74c3c; font-weight:bold;}
+.selisih-aman{color:#27ae60; font-weight:bold;}
+
+.empty{
+    text-align:center;
+    color:#888;
+    padding:20px;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    table, table * {
+        visibility: visible;
+    }
+    table {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+.icon-logo {
+    width: 50px;
+    height: 50px;
+    position : center;
+}
+
+    .pagination {
+    margin-top: 18px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    padding: 6px 12px;
+    background: #f1f3f6;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #2c3e50;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.page-btn:hover {
+    background: #dfe6ee;
+}
+
+.page-btn.active {
+    background: #2ecc71;
+    color: white;
+    font-weight: 500;
+}
+
+display: table-header-group;
+
+</style>
+
+<div class="card">
+<h2>📋 Rekap Pemeriksaan Barang</h2>
+
+<div class="table-container">
+<div style="display:flex; gap:10px; margin-bottom:15px;">
+    <a href="/rekap/excel">
+        <button style="background:#27ae60;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
+            ⬇ Export Excel
+        </button>
+    </a>
+
+    <a href="/rekap/cetak" target="_blank">
+        <button style="background:#3498db;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
+            🖨 Cetak Laporan
+        </button>
+    </a>
+</div>
+<table>
+<tr>
+    <!--<th rowspan="2">Kode</th>-->
+    <th rowspan="2">Nama Barang</th>
+    <th rowspan="2">Jumlah Fisik</th>
+    <th rowspan="2">Selisih</th>
+
+    <th colspan="4">KETERANGAN</th>
+
+    <th rowspan="2">Tipe</th>
+    <th rowspan="2">Merk</th>
+    <th rowspan="2">Tahun</th>
+    <th rowspan="2">Nilai</th>
+</tr>
+<tr>
+    <th>BB</th>
+    <th>RR</th>
+    <th>RB</th>
+    <th>HL</th>
+</tr>
+
+{% if data %}
+{% for d in data %}
+<tr>
+    <!--<td >{{ d.kode_barang }}</td>-->
+    <td style="text-align:left">{{ d.nama_barang }}</td>
+    
+    <td>{{ d.jumlah_fisik }}</td>
+    <td>{% set total_kondisi = d.rr + d.rb + d.hl %}
+    {{ 0 if total_kondisi == 0 else d.jumlah_barang - total_kondisi }}
+    </td>
+    
+    <td><span class="badge bb">{{ 0 }}</span></td>
+    <td><span class="badge rr">{{ d.rr }}</span></td>
+    <td><span class="badge rb">{{ d.rb }}</span></td>
+    <td><span class="badge hl">{{ d.hl }}</span></td>
+
+    <td>{{ d.tipe }}</td>
+    <td>{{ d.merk }}</td>
+    <td>{{ d.tahun_perolehan }}</td>
+    <td>Rp {{ "{:,}".format((d.nilai or 0)|int) }}</td>
+</tr>
+{% endfor %}
+{% else %}
+<tr>
+<td colspan="12" class="empty">Belum ada data pemeriksaan</td>
+</tr>
+{% endif %}
+</table>
+<div class="pagination">
+
+    {% if page > 1 %}
+        <a href="?page={{ page-1 }}" class="page-btn">← Prev</a>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+        <a href="?page={{ p }}"
+           class="page-btn {% if p == page %}active{% endif %}">
+           {{ p }}
+        </a>
+    {% endfor %}
+
+    {% if page < total_pages %}
+        <a href="?page={{ page+1 }}" class="page-btn">Next →</a>
+    {% endif %}
+
+</div>
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login Admin</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+/* ================= BACKGROUND ================= */
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg,#003d3d,#001f3f);
+    overflow:hidden;
+}
+
+/* animasi background */
+body::before{
+    content:"";
+    position:absolute;
+    width:600px;
+    height:600px;
+    background:rgba(255,255,255,0.05);
+    border-radius:50%;
+    top:-200px;
+    left:-200px;
+    animation: float 6s ease-in-out infinite;
+}
+
+body::after{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:rgba(255,255,255,0.05);
+    border-radius:50%;
+    bottom:-200px;
+    right:-200px;
+    animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(30px);}
+}
+
+/* ================= BOX ================= */
+.login-box{
+    width:350px;
+    padding:40px;
+    border-radius:20px;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.login-box h2{
+    text-align:center;
+    color:white;
+    margin-bottom:30px;
+    letter-spacing:2px;
+}
+
+/* ================= INPUT ================= */
+.input-group{
+    position:relative;
+    margin-bottom:25px;
+}
+
+.input-group input{
+    width:100%;
+    padding:15px 50px;
+    border-radius:30px;
+    border:none;
+    outline:none;
+    background: rgba(255,255,255,0.15);
+    color:white;
+    font-size:14px;
+    transition:0.3s;
+}
+
+/* glow effect */
+.input-group input:focus{
+    box-shadow:0 0 10px rgba(46,204,113,0.6);
+    background: rgba(255,255,255,0.25);
+}
+
+/* icon */
+.icon-left,
+.icon-right{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.icon-left{
+    left:8px;
+}
+
+.icon-right{
+    right:8px;
+    cursor:pointer;
+}
+
+/* ================= BUTTON ================= */
+.btn-login{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:30px;
+    background: linear-gradient(135deg,#2ecc71,#27ae60);
+    color:white;
+    font-weight:bold;
+    letter-spacing:1px;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+}
+
+/* ripple effect */
+.btn-login::after{
+    content:"";
+    position:absolute;
+    width:0;
+    height:0;
+    background:rgba(255,255,255,0.3);
+    border-radius:50%;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    transition:0.4s;
+}
+
+.btn-login:active::after{
+    width:200px;
+    height:200px;
+}
+
+/* hover */
+.btn-login:hover{
+    transform:translateY(-2px);
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* ================= ERROR ================= */
+.error{
+    color:#ff6b6b;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+/* ================= ICON ================= */
+img{
+    width:18px;
+}
+
+/* ================= ERROR PREMIUM ================= */
+.error-box {
+    background: rgba(231, 76, 60, 0.15);
+    border-left: 4px solid #e74c3c;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    color: #ffb3b3;
+    font-size: 14px;
+    text-align: center;
+
+    animation: shake 0.4s;
+}
+
+/* animasi goyang */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.success {
+    background: rgba(46, 204, 113, 0.2);
+    border-left: 4px solid #2ecc71;
+    color: #b7ffda;
+}
+
+.back-home {
+    display: inline-block;
+    margin-top: 15px;
+    color: #a8d5ba;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.back-home:hover {
+    color: #ffffff;
+    transform: translateX(-3px);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+<h2>LOGIN</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+        <div class="error-box">
+            {{ message }}
+        </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% if error %}
+
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="POST">
+
+<!-- USERNAME -->
+<div class="input-group">
+    <div class="icon-left">
+        <img src="{{ url_for('static', filename='icon/admin.png') }}">
+    </div>
+
+    <input type="text" name="username" placeholder="Username" required>
+</div>
+
+<!-- PASSWORD -->
+<div class="input-group">
+    <div class="icon-right" onclick="togglePassword()">
+        <img src="{{ url_for('static', filename='icon/pass.png') }}">
+    </div>
+
+    <input type="password" id="password" name="password" placeholder="Password" required>
+</div>
+
+<button class="btn-login">Masuk</button>
+
+</form>
+<br>
+<a href="/" class="back-home"> << Kembali</a>
+</div>
+
+<script>
+function togglePassword(){
+    let pass = document.getElementById("password");
+
+    if(pass.type === "password"){
+        pass.type = "text";
+    } else {
+        pass.type = "password";
+    }
+}
+
+setTimeout(() => {
+    const alert = document.querySelector('.error-box');
+    if(alert){
+        alert.style.opacity = '0';
+    }
+}, 3000);
+
+</script>
+
+</body>
+</html>

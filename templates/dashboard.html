@@ -1,0 +1,187 @@
+{% extends "layout.html" %}
+{% block content %}
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Inventaris</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+    font-family:'Poppins',sans-serif;
+    background:#eef2f7;
+}
+.container{
+    max-width:1100px;
+    margin:30px auto;
+}
+h1{text-align:center;margin-bottom:25px;}
+
+.cards{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    text-align:center;
+}
+
+.card h2{
+    margin:10px 0;
+    color:#2c3e50;
+}
+
+.card span{
+    font-size:28px;
+    font-weight:bold;
+    color:#27ae60;
+}
+
+.chart-box{
+    background:white;
+    margin-top:25px;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.card-link{
+    text-decoration:none;
+    color:inherit;
+}
+
+.card{
+    transition:0.2s;
+    cursor:pointer;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 18px rgba(0,0,0,0.15);
+}
+
+.card-barang{
+    border-left:6px solid #2ecc71;
+}
+
+.card-ruang{
+    border-left:6px solid #3498db;
+}
+
+.card-aset{
+    border-left:6px solid #f39c12;
+}
+
+.card-barang span { color:#2ecc71; }
+.card-ruang span { color:#3498db; }
+.card-aset span { color:#f39c12; }
+
+.icon-logo {
+    width: 50px;
+    height: 50px;
+    position : center;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 Dashboard Inventaris Aset BMN SRMA 34 Lebak </h1>
+
+<div class="cards">
+
+<a href="/barang" class="card-link">
+<div class="card card-barang">
+    <h2>Total Barang</h2>
+    <span>{{ total_barang }}</span>
+    <p></p>
+</div>
+</a>
+
+<a href="/ruangan" class="card-link">
+<div class="card card-ruang">
+    <h2>Total Ruangan</h2>
+    <span>{{ total_ruang }}</span>
+    <p></p>
+</div>
+</a>
+
+<a href="/barang_ruang" class="card-link">
+<div class="card card-aset">
+    <h2>Total Aset</h2>
+    <span>{{ total_aset if total_aset else 0 }}</span>
+    <p></p>
+</div>
+</a>
+</div>
+
+    <div class="chart-box">
+        <h2>Distribusi Barang per Ruangan</h2>
+        <canvas id="grafik"></canvas>
+    </div>
+    <br>
+    <div class="card" style="border-left: 8px solid {{ warna }};">
+    <h2>Status Kondisi Inventaris</h2>
+    <span style="font-size:28px; color: {{ warna }}; font-weight:bold;">
+        {{ status }}
+    </span>
+</div>
+
+</div>
+
+<script>
+const ctx2 = document.getElementById('grafikKondisi');
+
+new Chart(ctx2, {
+    type: 'pie',
+    data: {
+        labels: {{ kondisi_labels | tojson }},
+        datasets: [{
+            data: {{ kondisi_values | tojson }},
+            backgroundColor: [
+                '#2ecc71',
+                '#f39c12',
+                '#e67e22',
+                '#e74c3c'
+            ]
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
+
+<script>
+const ctx = document.getElementById('grafik');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ labels | tojson }},
+        datasets: [{
+            label: 'Jumlah Barang',
+            data: {{ values | tojson }},
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
+{% endblock %}

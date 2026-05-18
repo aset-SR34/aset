@@ -1,0 +1,257 @@
+{% extends "layout.html" %}
+{% block content %}
+<head>
+<meta charset="UTF-8">
+<title>Penempatan Barang</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+body {font-family:'Poppins'; background:#eef2f7;}
+.container {max-width:900px; margin:30px auto;}
+.card {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    margin-bottom:20px;
+}
+h2{text-align:center;}
+label{display:block;margin-top:10px;}
+/* pastikan ukuran input konsisten */
+select,
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;   /* ⭐ penting */
+    font-size: 14px;
+}
+
+button{width:100%;padding:10px;margin-top:15px;background:#2ecc71;color:white;border:none;border-radius:8px;}
+button:hover{background:#27ae60;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;}
+th{background:#2c3e50;color:white;}
+.ruang-title{margin-top:15px;color:#2c3e50;}
+
+.icon-logo {
+    width: 50px;
+    height: 50px;
+    position : center;
+}
+
+/* hilangkan panah input number */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+select,
+input {
+    height: 42px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #2ecc71;
+    box-shadow: 0 0 4px rgba(46,204,113,0.3);
+}
+
+.btn-print {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: linear-gradient(135deg,#3498db,#2980b9);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    transition: 0.25s;
+}
+
+.btn-print:hover {
+    background: linear-gradient(135deg,#2980b9,#1f6694);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(52,152,219,0.35);
+}
+
+.btn-edit {
+        background: #3498db00;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 0 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-edit:hover {
+        background: #2980b9;
+    }
+
+    .icon-edit {
+        width: 16px;
+        height: 16px;
+    }
+
+    .icon-logo {
+        width: 50px;
+        height: 50px;
+    }   
+
+
+</style>
+</head>
+<body>
+
+<div class="container">
+{% if session.get('role') == 'admin' %}
+<div class="card">
+<h2>📦 Penempatan Barang ke Ruangan</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div style="color:red; margin-bottom:10px;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+
+<label>Nama Barang</label>
+<select name="barang_id" required>
+    <option value="">-- Pilih Barang --</option>
+    {% for b in barang %}
+        <option value="{{ b.id }}" data-sisa="{{ b.sisa }}">
+            {{ b.nama_barang }} (sisa: {{ b.sisa }})
+        </option>
+    {% endfor %}
+</select>
+
+<label>Pilih Ruangan</label>
+<select name="ruang_id" required>
+    <option value="">-- Pilih Ruangan --</option>
+    {% for r in ruang %}
+        <option value="{{ r.id }}">{{ r.nama_ruang }}</option>
+    {% endfor %}
+</select>
+
+<label>Jumlah</label>
+<input type="number" name="jumlah" id="jumlahInput" min="1" required>
+<small id="stokInfo" style="color:#666;"></small>
+
+<button type="submit">Simpan</button>
+</form>
+</div>
+{% endif %}
+
+<div class="card">
+    <form method="GET" style="margin-bottom:15px;">
+        <label>Filter Ruangan</label>
+
+        <select name="ruang_id" onchange="this.form.submit()">
+            <option value="">-- Semua Ruangan --</option>
+
+            {% for r in ruang %}
+                <option value="{{ r.id }}"
+                {% if ruang_filter == r.id|string %}selected{% endif %}>
+                    {{ r.nama_ruang }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if ruang_filter %}
+        <a href="/barang_ruang/cetak/{{ ruang_filter }}" target="_blank">
+        {% if session.get('role') == 'admin' %}<button class="btn-print">
+        🖨 Cetak Ruangan
+        </button>{% endif %}
+        </a>
+    {% endif %}
+
+<h2>📋 Barang per Ruangan</h2>
+
+{% for ruang, items in grouped.items() %}
+    <h3 class="ruang-title">🏫 {{ ruang }}</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Barang</th>
+                <th>Jumlah</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.nama_barang }}</td>
+                <td>{{ item.jumlah }}</td>
+                <td>{% if session.get('role') == 'admin' %}
+                    <a href="/periksa?ruang_id={{ item.id }}">
+                    <button class="btn-edit"><img src="{{ url_for('static', filename='icon/cari.png') }}" class="icon-edit"></button></td>
+                    </a>{% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+</div>
+
+</div>
+    <script>
+const barangSelect = document.querySelector('select[name="barang_id"]');
+const jumlahInput = document.getElementById('jumlahInput');
+const stokInfo = document.getElementById('stokInfo');
+
+let stokSisa = 0;
+
+barangSelect.addEventListener('change', function () {
+
+    const selected = this.options[this.selectedIndex];
+    stokSisa = parseInt(selected.dataset.sisa || 0);
+
+    jumlahInput.value = "";
+    jumlahInput.max = stokSisa;
+
+    stokInfo.innerHTML =
+        "Stok belum didistribusikan: <b>" + stokSisa + "</b>";
+
+    stokInfo.style.color =
+        stokSisa === 0 ? "red" : "#666";
+});
+
+jumlahInput.addEventListener('input', function () {
+
+    let nilai = parseInt(this.value || 0);
+
+    // hanya batasi jika melebihi stok
+    if (nilai > stokSisa) {
+        this.value = stokSisa;
+    }
+
+    // tidak boleh minus / nol
+    if (nilai < 1) {
+        this.value = "";
+    }
+});
+</script>
+</body>
+</html>
+{% endblock %}

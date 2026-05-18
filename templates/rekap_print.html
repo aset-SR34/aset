@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cetak Rekap</title>
+<style>
+
+display: table-header-group;
+
+body{
+    font-family: Arial;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    page-break-inside:auto;
+}
+
+tr{
+    page-break-inside:avoid;
+}
+
+th,td{
+    border:1px solid #000;
+    padding:8px;
+    font-size:12px;
+    text-align:center;
+}
+
+th{
+    background:#eee;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    text-align:center;
+}
+
+.header h2,
+.header h3,
+.header p{
+    margin:2px;
+}
+
+.line{
+    border-top:3px solid black;
+    margin-top:10px;
+}
+
+.kop-container{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.kop-logo{
+    width:90px;
+}
+
+.kop-text{
+    text-align:center;
+    flex:1;
+}
+
+.kop-text h2,
+.kop-text h3,
+.kop-text p{
+    margin:2px;
+}
+
+.kop-wrapper{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:5px;
+}
+
+.kop-logo{
+    width:80px;
+    height:auto;
+}
+
+.kop-text{
+    flex:1;
+    text-align:center;
+    line-height:1.2;
+}
+
+.kop-text h2,
+.kop-text h3{
+    margin:0;
+}
+
+.kop-text p{
+    margin:2px 0 0 0;
+    font-size:14px;
+}
+
+/* ✅ GARIS KOP FIX */
+.kop-line{
+    border-top:3px solid black;
+    margin-top:6px;
+    margin-bottom:8px;
+}
+
+/* ================= AUTO HEADER PRINT ================= */
+
+.main-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    display: table-header-group;
+}
+
+tfoot{
+    display: table-footer-group;
+}
+
+tr{
+    page-break-inside: avoid;
+}
+
+@media print {
+    button{display:none;}
+}
+</style>
+</head>
+<body><div class="kop-wrapper">
+
+<img src="{{ url_for('static', filename='logo/logo_kemensos.png') }}"
+class="kop-logo">
+
+<div class="kop-text">
+
+<h3>KEMENTERIAN SOSIAL REPUBLIK INDONESIA</h3>
+<h2>SEKOLAH RAKYAT MENENGAH ATAS 34</h2>
+<h3>KABUPATEN LEBAK</h3>
+
+<p>
+Jl. Siliwangi No.208 Rangkasbitung Timur,
+Kabupaten Lebak, Banten 42313
+</p>
+
+</div>
+
+<img src="{{ url_for('static', filename='logo/logo_sekolah.png') }}"
+class="kop-logo">
+
+</div>
+
+<div class="kop-line"></div>
+    <h3 style="text-align:center;margin-top:10px;">
+        Laporan Semesteran Pemeriksaan Barang
+    </h3>
+</div>
+
+<button onclick="window.print()">🖨 Cetak</button>
+<br>
+
+<table class="main-table">
+<tr>
+    <th rowspan="2">No</th>
+    <!--<th rowspan="2">Kode</th>-->
+    <th rowspan="2">Nama Barang</th>
+    <th rowspan="2">Jumlah Fisik</th>
+    <th rowspan="2">Selisih</th>
+
+    <th colspan="4">KETERANGAN</th>
+
+    <th rowspan="2">Tipe</th>
+    <th rowspan="2">Merk</th>
+    <th rowspan="2">Tahun</th>
+    <th rowspan="2">Nilai</th>
+</tr>
+<tr>
+    <th>BB</th>
+    <th>RR</th>
+    <th>RB</th>
+    <th>HL</th>
+</tr>
+
+{% for d in data %}
+<tr>
+
+<td>{{ loop.index }}</td>
+
+<td style="text-align:left">{{ d.nama_barang }}</td>
+<td>{{ d.jumlah_barang }}</td>
+
+<td>{% set total_kondisi = d.rr + d.rb + d.hl %}
+{{ 0 if total_kondisi == 0 else d.jumlah_barang - total_kondisi }}
+</td>
+
+<td>{{ 0 }}</td>
+<td>{{ d.rr }}</td>
+<td>{{ d.rb }}</td>
+<td>{{ d.hl }}</td>
+
+<td>{{ d.tipe }}</td>
+<td>{{ d.merk }}</td>
+<td>{{ d.tahun_perolehan }}</td>
+<td>Rp {{ "{:,}".format((d.nilai or 0)|int) }}</td>
+
+</tr>
+{% endfor %}
+</table>
+
+<script>
+window.print();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>.</title>
+
+<style>
+
+body{
+    font-family: "Times New Roman";
+    margin:40px;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    text-align:center;
+}
+
+.header h2,
+.header h3,
+.header p{
+    margin:2px;
+}
+
+.line{
+    border-top:3px solid black;
+    margin-top:10px;
+}
+
+.kop-container{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.kop-logo{
+    width:90px;
+}
+
+.kop-text{
+    text-align:center;
+    flex:1;
+}
+
+.kop-text h2,
+.kop-text h3,
+.kop-text p{
+    margin:2px;
+}
+
+.kop-wrapper{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:5px;
+}
+
+.kop-logo{
+    width:80px;
+    height:auto;
+}
+
+.kop-text{
+    flex:1;
+    text-align:center;
+    line-height:1.2;
+}
+
+.kop-text h2,
+.kop-text h3{
+    margin:0;
+}
+
+.kop-text p{
+    margin:2px 0 0 0;
+    font-size:14px;
+}
+
+/* ✅ GARIS KOP FIX */
+.kop-line{
+    border-top:3px solid black;
+    margin-top:6px;
+    margin-bottom:8px;
+}
+
+.garis{
+    border-top:3px solid black;
+    margin-top:8px;
+}
+
+/* ================= TABLE ================= */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th,td{
+    border:1px solid black;
+    padding:6px;
+    font-size:13px;
+}
+
+th{
+    background:#d79ac8;
+}
+
+.center{text-align:center;}
+.left{text-align:left;}
+
+/* ================= FOOTER ================= */
+
+.ttd-area{
+    width:100%;
+    margin-top:80px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.ttd-box{
+    width:40%;
+    text-align:center;
+}
+
+.ttd-nama{
+    margin-top:80px;
+}
+
+.garis{
+    margin-top:60px;
+    border-top:1px solid black;
+}
+
+/* PRINT */
+@media print{
+button{display:none;}
+}
+
+</style>
+</head>
+
+<body>
+
+<button onclick="window.print()">🖨 Cetak</button>
+
+<div class="kop-wrapper">
+
+<img src="{{ url_for('static', filename='logo/logo_kemensos.png') }}"
+class="kop-logo">
+
+<div class="kop-text">
+
+<h3>KEMENTERIAN SOSIAL REPUBLIK INDONESIA</h3>
+<h2>SEKOLAH RAKYAT MENENGAH ATAS 34</h2>
+<h3>KABUPATEN LEBAK</h3>
+
+<p>
+Jl. Siliwangi No.208 Rangkasbitung Timur,
+Kabupaten Lebak, Banten 42313
+</p>
+
+</div>
+
+<img src="{{ url_for('static', filename='logo/logo_sekolah.png') }}"
+class="kop-logo">
+
+</div>
+
+<div class="kop-line"></div>
+    <h3 style="text-align:center;margin-top:10px;">
+        DAFTAR BARANG RUANGAN (DBR)
+    </h3>
+</div>
+<br>
+<b>Nama Ruangan : {{ ruang.nama_ruang }}</b>
+<table>
+    <tr>
+        <th rowspan="2">No</th>
+        <th rowspan="2">Nama Barang</th>
+        <th colspan="3">Keterangan</th>
+        <th rowspan="2">Jumlah Barang</th>
+        <th rowspan="2">Status BMN</th>
+        <th rowspan="2">Kondisi</th>
+    </tr>
+    <tr>
+        <th>Merk</th>
+        <th>Kode Barang</th>
+        <th>Perolehan</th>
+    </tr>
+        {% for d in data %}
+    <tr>
+        <td class="center">{{ loop.index }}</td>
+        <td class="left">{{ d.nama_barang }}</td>
+        <td class="center">{{ d.merk }}</td>
+        <td class="center">{{ d.kode_barang }}</td>
+        <td class="center">{{ d.tahun_perolehan }}</td>
+        <td class="center">{{ d.jumlah }}</td>
+        <td class="center">Milik Sendiri</td>
+        <td class="center">Baik</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<!-- ================= TTD ================= -->
+
+<div class="ttd-area">
+    <div class="ttd-box">
+        Mengetahui,<br>
+        Kepala Sekolah SRMA 34 Lebak
+            <div class="ttd-nama">Candra Lestianta Budiharja, S.Pd
+            <br><br>
+            NIP. 198204102010011009
+        </div>
+    </div>
+    <div class="ttd-box"><br>Penanggung Jawab Ruangan
+        <div class="ttd-nama">(______________________)
+            <br><br>
+            NIP. ........................................
+        </div>
+    </div>
+</div>
+
+<script>
+window.print();
+</script>
+
+</body>
+</html>

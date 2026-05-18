@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Laporan Pemeriksaan</title>
+<style>
+table {border-collapse:collapse;width:100%;}
+th,td {border:1px solid #ddd;padding:8px;text-align:center;}
+th {background:#2c3e50;color:white;}
+</style>
+</head>
+<body>
+
+<h2>Laporan Pemeriksaan Barang</h2>
+
+<table>
+<tr>
+<th>Tanggal</th>
+<th>Ruangan</th>
+<th>Barang</th>
+<th>BB</th>
+<th>RR</th>
+<th>RB</th>
+<th>HL</th>
+<th>Jumlah</th>
+</tr>
+
+{% for d in data %}
+<tr>
+<td>{{d.tanggal}}</td>
+<td>{{d.nama_ruang}}</td>
+<td>{{d.uraian}}</td>
+<td>{{d.bb}}</td>
+<td>{{d.rr}}</td>
+<td>{{d.rb}}</td>
+<td>{{d.hl}}</td>
+<td>{{d.jumlah_fisik}}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</body>
+</html>

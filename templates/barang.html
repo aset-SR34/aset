@@ -1,0 +1,467 @@
+{% extends "layout.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Inventori Aset SRMA 34 Lebak</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        input {
+            padding: 10px;
+            margin-right: 8px;
+            margin-left: 33px;
+            margin-top: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 26%;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 12px;
+            margin-left: 33px;
+            background: #2ecc7000;
+        }
+
+        .btn-add {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #27ae60;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        tr:hover {
+            background: #f2f6fc;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            input {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: #555;
+        }
+
+        .form-group input {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .form-group input:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 3px rgba(46,204,113,0.15);
+            outline: none;
+        }
+
+        .form-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg,#2ecc71,#27ae60);
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 15px;
+            letter-spacing: .3px;
+            box-shadow: 0 4px 10px rgba(39,174,96,0.25);
+            transition: 0.25s ease;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(39,174,96,0.35);
+        }
+
+        select:focus, input:focus {
+            border-color: #2ecc71;
+            outline: none;
+            box-shadow: 0 0 4px rgba(46,204,113,0.4);
+        }
+
+    .btn-edit {
+        background: #3498db00;
+        border: none;
+        padding: 8px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 0 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-edit:hover {
+        background: #2980b9;
+    }
+
+    .icon-edit {
+        width: 16px;
+        height: 16px;
+    }
+
+    .icon-logo {
+        width: 50px;
+        height: 50px;
+    }   
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background: white;
+        margin: 8% auto;
+        padding: 25px;
+        width: 520px;
+        border-radius: 10px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content input {
+        width: 80%;
+        margin-bottom: 0px;
+    }
+
+    .close {
+        float: right;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(-10px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+
+    .pagination {
+        margin-top: 18px;
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .page-btn {
+        padding: 6px 12px;
+        background: #f1f3f6;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #2c3e50;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .page-btn:hover {
+        background: #dfe6ee;
+    }
+
+    .page-btn.active {
+        background: #2ecc71;
+        color: white;
+        font-weight: 500;
+    }
+
+    .btn-add{background:#3498db;color:white;}
+    .btn-add:hover{background:#2980b9;}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📦 Inventori Aset BMN SRMA 34 Lebak</h1>
+{% if session.get('role') == 'admin' %}
+    <div class="card">
+        <form action="{{ url_for('tambah_barang') }}" method="POST">
+            <input type="text" name="kode_barang" placeholder="Kode Barang" required>
+            <input type="text" name="nama_barang" placeholder="Nama Barang" required>
+            <input type="number" name="jumlah_barang" placeholder="Jumlah Barang" required>
+            <input type="text" name="tipe" placeholder="Tipe">
+            <input type="text" name="merk" placeholder="Merk">
+            <input type="number" name="tahun_perolehan" placeholder="Tahun">
+            <input type="number" name="nilai" placeholder="Nilai">
+            <!--<select name="ruang_id" class="form-input" required>
+                <option value="">-- Pilih Ruangan --</option>
+                {% for r in ruang %}
+                    <option value="{{ r.id }}">{{ r.nama_ruang }}</option>
+                {% endfor %}
+            </select>-->
+            <div class="form-actions">
+                <button type="submit" class="btn-add">Tambah Aset</button>
+            </div>
+        </form>
+    </div>    
+    {% endif %}
+
+    <div class="card">
+        <div style="margin-bottom:15px; display:flex; gap:10px; align-items:center;">
+            <form method="GET" style="display:flex; gap:10px;">
+                <input type="text"
+                    name="kode_filter"
+                    placeholder="🔍 Filter Kode Barang..."
+                    value="{{ kode_filter or '' }}"
+                    style="width:220px; margin-left:0;">
+                <button type="submit"
+                        style="background:#3498db;color:white;">
+                Filter
+                </button>
+                <a href="{{ url_for('barang') }}">
+                <button type="button"
+                        style="background:#95a5a6;color:white;">
+                Reset
+                </button>
+                </a>
+            </form>
+
+        </div>
+        <table>
+            <tr>
+                <th>Kode</th>
+                <th>Nama</th>
+                <th>Jumlah</th>
+                <th>Tipe</th>
+                <th>Merk</th>
+                <th>Tahun</th>
+                <th>Nilai</th>
+                <th>Aksi</th>
+            </tr>
+            {% for a in data %}
+            <tr>
+                <td>{{ a.kode_barang }}</td>
+                <td>{{ a.nama_barang }}</td>
+                <td>{{ a.jumlah_barang }}</td>
+                <td>{{ a.tipe }}</td>
+                <td>{{ a.merk }}</td>
+                <td>{{ a.tahun_perolehan }}</td>
+                <td>{{ a.nilai }}</td>
+                <td>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="/hapus/{{a.id}}"
+                        onclick="return konfirmasiHapus(event)">
+                            <button type="button" class="btn-edit">
+                                <img src="{{ url_for('static', filename='icon/delete.png') }}"
+                                    class="icon-edit">
+                            </button></a>
+
+                    <!-- tombol edit -->
+                    <button class="btn-edit"
+                        onclick="openEditModal(
+                            '{{a.id}}',
+                            '{{a.kode_barang}}',
+                            '{{a.nama_barang}}',
+                            '{{a.jumlah_barang}}',
+                            '{{a.tipe}}',
+                            '{{a.merk}}',
+                            '{{a.tahun_perolehan}}',
+                            '{{a.nilai}}'
+                        )">
+                        <img src="{{ url_for('static', filename='icon/edit.png') }}" class="icon-edit">
+                    </button>
+
+                    <a href="/periksa?ruang_id={{ a.id }}">
+                        <button class="btn-edit"><img src="{{ url_for('static', filename='icon/cari.png') }}" class="icon-edit"></button>
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    <div class="pagination">
+
+        {% if page > 1 %}
+            <a href="?page={{ page-1 }}&kode_filter={{ kode_filter }}"
+            class="page-btn">← Prev</a>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+            <a href="?page={{ p }}&kode_filter={{ kode_filter }}"
+            class="page-btn {% if p == page %}active{% endif %}">
+            {{ p }}
+            </a>
+        {% endfor %}
+
+        {% if page < total_pages %}
+            <a href="?page={{ page+1 }}&kode_filter={{ kode_filter }}"
+            class="page-btn">Next →</a>
+        {% endif %}
+
+    </div>
+
+    </div>
+
+    <div class="footer">
+        Sistem Inventori Aset Sekolah © 2026
+    </div>
+
+</div>
+    <!-- Modal Edit -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Edit Data Aset</h2>
+
+    <form method="POST" id="editForm">
+        <input type="hidden" name="id" id="edit-id">
+        <input type="text" name="kode_barang" id="edit-kode" required>
+        <input type="text" name="nama_barang" id="edit-nama" required>
+        <input type="number" name="jumlah_barang" id="edit-jumlah" required>
+        <input type="text" name="tipe" id="edit-tipe">
+        <input type="text" name="merk" id="edit-merk">
+        <input type="number" name="tahun_perolehan" id="edit-tahun">
+        <input type="number" name="nilai" id="edit-nilai">
+
+        <button type="submit" class="btn-add">Update</button>
+    </form>
+  </div>
+</div>
+
+    <script>
+function openEditModal(id, kode, nama, jumlah, tipe, merk, tahun, nilai) {
+
+    document.getElementById('editForm').action =
+        "/barang/update/" + id;
+
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-kode').value = kode;
+    document.getElementById('edit-nama').value = nama;
+    document.getElementById('edit-jumlah').value = jumlah;
+    document.getElementById('edit-tipe').value = tipe;
+    document.getElementById('edit-merk').value = merk;
+    document.getElementById('edit-tahun').value = tahun;
+    document.getElementById('edit-nilai').value = nilai;
+
+    document.getElementById('editModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+function konfirmasiHapus(event) {
+
+    let konfirmasi = confirm(
+        "⚠️ Data tersebut akan dihapus !"
+    );
+
+    if (!konfirmasi) {
+        event.preventDefault(); // batal hapus
+        return false;
+    }
+
+    return true;
+}
+
+// tutup modal jika klik luar area
+window.onclick = function(event) {
+    let modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>
+{% endblock %}
